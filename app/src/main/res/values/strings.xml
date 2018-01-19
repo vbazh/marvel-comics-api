@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Marvel Comics</string>
+    <string name="choose_interval">Выберите интервал</string>
+    <string name="start_interval">Начало</string>
+    <string name="end_interval">Конец</string>
+    <string name="choose">Выбрать</string>
+    <string name="wrong_interval">Введите верный интервал</string>
+    <string name="text_retry_download">Повторить запрос</string>
+    <string name="text_no_data">Нет данных в указанном интервале</string>
+    <string name="text_characters">Персонажи</string>
+</resources>

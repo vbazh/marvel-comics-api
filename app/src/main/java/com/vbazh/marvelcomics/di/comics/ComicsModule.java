@@ -1,6 +1,7 @@
 package com.vbazh.marvelcomics.di.comics;
 
 import com.vbazh.marvelcomics.data.network.MarvelApiService;
+import com.vbazh.marvelcomics.di.annotations.ComicsScope;
 import com.vbazh.marvelcomics.domain.characters.CharacterInteractorImpl;
 import com.vbazh.marvelcomics.domain.characters.ICharacterInteractor;
 import com.vbazh.marvelcomics.domain.comics.ComicsInteractor;
@@ -20,26 +21,31 @@ import dagger.Provides;
 public class ComicsModule {
 
     @Provides
+    @ComicsScope
     ComicsContract.Presenter providePresenter(IComicsInteractor comicsInteractor, ICharacterInteractor characterInteractor){
         return new ComicsPresenter(comicsInteractor, characterInteractor);
     }
 
     @Provides
+    @ComicsScope
     IComicsInteractor provideComicsInteractor(ComicsRepositoryImpl comicsRepositoryImpl){
         return new ComicsInteractor(comicsRepositoryImpl);
     }
 
     @Provides
+    @ComicsScope
     IComicsRepository provideComicsRepository(MarvelApiService apiService){
         return new ComicsRepositoryImpl(apiService);
     }
 
     @Provides
+    @ComicsScope
     ICharacterInteractor provideCharacterInteractor(CharacterRepositoryImpl characterRepositoryImpl){
         return new CharacterInteractorImpl(characterRepositoryImpl);
     }
 
     @Provides
+    @ComicsScope
     ICharacterRepository provideCharacterRepository(MarvelApiService apiService){
         return new CharacterRepositoryImpl(apiService);
     }

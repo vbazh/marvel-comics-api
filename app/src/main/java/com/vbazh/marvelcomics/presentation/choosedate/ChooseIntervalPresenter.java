@@ -2,11 +2,13 @@ package com.vbazh.marvelcomics.presentation.choosedate;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
+import com.vbazh.marvelcomics.di.annotations.IntervalScope;
 
 import java.util.Calendar;
 
 import javax.inject.Inject;
 
+@IntervalScope
 @InjectViewState
 public class ChooseIntervalPresenter extends MvpPresenter<ChooseIntervalContract.View> implements ChooseIntervalContract.Presenter {
 

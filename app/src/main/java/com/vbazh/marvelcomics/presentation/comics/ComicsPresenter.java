@@ -2,6 +2,7 @@ package com.vbazh.marvelcomics.presentation.comics;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
+import com.vbazh.marvelcomics.di.annotations.ComicsScope;
 import com.vbazh.marvelcomics.domain.characters.ICharacterInteractor;
 import com.vbazh.marvelcomics.domain.comics.IComicsInteractor;
 import com.vbazh.marvelcomics.utils.RxUtil;
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 
+@ComicsScope
 @InjectViewState
 public class ComicsPresenter extends MvpPresenter<ComicsContract.View> implements ComicsContract.Presenter {
 

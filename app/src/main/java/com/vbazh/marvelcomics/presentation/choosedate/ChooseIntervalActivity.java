@@ -124,8 +124,11 @@ public class ChooseIntervalActivity extends MvpAppCompatActivity implements Choo
 
     @Override
     protected void onDestroy() {
-        ComponentManager.getInstance().destroyIntervalComponent();
         super.onDestroy();
+
+        if (isFinishing()){
+            ComponentManager.getInstance().destroyIntervalComponent();
+        }
         if (datePickerDialog != null) {
             datePickerDialog.dismiss();
             datePickerDialog = null;

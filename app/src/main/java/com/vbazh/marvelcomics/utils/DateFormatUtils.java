@@ -23,7 +23,7 @@ public class DateFormatUtils {
 
     public String formatDate(@NonNull long date) {
         if (date != 0) {
-            return new SimpleDateFormat("yyyy-MM-DD", Locale.getDefault()).format(new Date(date));
+            return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date(date));
         }
         return "";
     }

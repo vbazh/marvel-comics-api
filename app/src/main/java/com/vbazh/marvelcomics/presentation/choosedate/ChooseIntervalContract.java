@@ -14,7 +14,7 @@ public interface ChooseIntervalContract {
 
         void setEndInterval(int year, int month, int day);
 
-        void checkValidInterval(long start, long end);
+        void checkValidInterval();
 
         void pickStartInterval();
 
@@ -32,7 +32,7 @@ public interface ChooseIntervalContract {
         void setEnd(long endDate);
 
         @StateStrategyType(OneExecutionStateStrategy.class)
-        void startComicsActivity();
+        void startComicsActivity(long start, long end);
 
         @StateStrategyType(OneExecutionStateStrategy.class)
         void showError();

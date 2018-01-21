@@ -32,9 +32,7 @@ public class ComicsActivity extends MvpAppCompatActivity implements ComicsContra
     ComicAdapter comicAdapter;
     ProgressBar loadingProgressBar;
     Button retryButton;
-    long start, end;
     TextView textNoData;
-    boolean isLoading;
 
     @Inject
     DateFormatUtils dateFormatUtils;
@@ -54,11 +52,11 @@ public class ComicsActivity extends MvpAppCompatActivity implements ComicsContra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comics);
 
-        start = getIntent().getLongExtra(Consts.EXTRA_START_INTERVAL, 0);
-        end = getIntent().getLongExtra(Consts.EXTRA_END_INTERVAL, 0);
+        presenter.getDataIntent(getIntent().getLongExtra(Consts.EXTRA_START_INTERVAL, 0),
+                getIntent().getLongExtra(Consts.EXTRA_END_INTERVAL, 0));
 
         if (savedInstanceState == null) {
-            presenter.loadData(dateFormatUtils.formatIntervalForQuery(start, end));
+            presenter.loadData();
         }
 
         initViews();
@@ -72,10 +70,9 @@ public class ComicsActivity extends MvpAppCompatActivity implements ComicsContra
         retryButton = findViewById(R.id.button_retry);
         textNoData = findViewById(R.id.text_no_data);
 
-        toolbar.setTitle(dateFormatUtils.formatIntervalText(start, end));
         toolbar.setNavigationOnClickListener(view -> onBackPressed());
 
-        retryButton.setOnClickListener(view -> presenter.loadData(dateFormatUtils.formatIntervalForQuery(start, end)));
+        retryButton.setOnClickListener(view -> presenter.loadData());
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         comicsRecyclerView.setLayoutManager(layoutManager);
@@ -94,11 +91,19 @@ public class ComicsActivity extends MvpAppCompatActivity implements ComicsContra
                 int visibleItemCount = layoutManager.getChildCount();
                 int totalItemCount = layoutManager.getItemCount();
                 int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
-                if (!isLoading) {
-                    presenter.onScrolled(visibleItemCount, totalItemCount, firstVisibleItem);
-                }
+
+                presenter.onScrolled(visibleItemCount, totalItemCount, firstVisibleItem);
+
             }
         });
+    }
+
+    @Override
+    public void setTitle(String interval) {
+
+        if (toolbar != null) {
+            toolbar.setTitle(interval);
+        }
     }
 
     @Override
@@ -123,13 +128,13 @@ public class ComicsActivity extends MvpAppCompatActivity implements ComicsContra
 
     @Override
     public void showLoading() {
-        isLoading = true;
+
         loadingProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLoading() {
-        isLoading = false;
+
         loadingProgressBar.setVisibility(View.INVISIBLE);
     }
 
@@ -153,7 +158,9 @@ public class ComicsActivity extends MvpAppCompatActivity implements ComicsContra
 
     @Override
     protected void onDestroy() {
-        ComponentManager.getInstance().destroyComicsComponent();
         super.onDestroy();
+        if (isFinishing()) {
+            ComponentManager.getInstance().destroyComicsComponent();
+        }
     }
 }

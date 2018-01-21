@@ -1,6 +1,5 @@
 package com.vbazh.marvelcomics.presentation.choosedate;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -21,8 +20,7 @@ public class ChooseIntervalActivity extends MvpAppCompatActivity implements Choo
 
     Toolbar toolbar;
     EditText startInterval, endInterval;
-    long end, start;
-    DatePickerDialog datePickerDialog;
+    PickDateDialog datePickerDialog;
 
     @Inject
     @InjectPresenter
@@ -46,17 +44,13 @@ public class ChooseIntervalActivity extends MvpAppCompatActivity implements Choo
         startInterval = findViewById(R.id.start_interval);
         endInterval = findViewById(R.id.end_interval);
 
-        startInterval.setOnClickListener(view -> {
+        startInterval.setOnClickListener(view -> presenter.pickStartInterval());
 
-            presenter.pickStartInterval();
-        });
-
-        endInterval.setOnClickListener(view -> {
-            presenter.pickEndInterval();
-        });
+        endInterval.setOnClickListener(view -> presenter.pickEndInterval());
 
         findViewById(R.id.choose_button).setOnClickListener(view -> {
-            presenter.checkValidInterval(start, end);
+
+            presenter.checkValidInterval();
         });
 
         toolbar.setTitle(R.string.app_name);
@@ -64,19 +58,18 @@ public class ChooseIntervalActivity extends MvpAppCompatActivity implements Choo
 
     @Override
     public void setStart(long startDate) {
-        start = startDate;
+
         startInterval.setText(dateFormatUtils.formatDate(startDate));
     }
 
     @Override
     public void setEnd(long endDate) {
 
-        end = endDate;
         endInterval.setText(dateFormatUtils.formatDate(endDate));
     }
 
     @Override
-    public void startComicsActivity() {
+    public void startComicsActivity(long start, long end) {
 
         Intent startComicsActivity = new Intent(this, ComicsActivity.class);
         startComicsActivity.putExtra(Consts.EXTRA_START_INTERVAL, start);
@@ -126,7 +119,7 @@ public class ChooseIntervalActivity extends MvpAppCompatActivity implements Choo
     protected void onDestroy() {
         super.onDestroy();
 
-        if (isFinishing()){
+        if (isFinishing()) {
             ComponentManager.getInstance().destroyIntervalComponent();
         }
         if (datePickerDialog != null) {

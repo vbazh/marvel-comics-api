@@ -3,6 +3,7 @@ package com.vbazh.marvelcomics.presentation.comics.ui;
 import android.annotation.SuppressLint;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,22 +13,21 @@ import com.vbazh.marvelcomics.models.CharacterResponse;
 import com.vbazh.marvelcomics.models.ComicsResponse;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
 public class ComicAdapter extends RecyclerView.Adapter<ComicViewHolder> {
 
     private List<ComicsResponse.Comic> comics;
-    private HashMap<Integer, List<CharacterResponse.Character>> characters;
+    private SparseArray<List<CharacterResponse.Character>> characters;
 
     private OnClickListener listener;
-    CharacterAdapter characterAdapter;
+    private CharacterAdapter characterAdapter;
 
     public ComicAdapter(OnClickListener listener) {
         this.listener = listener;
         comics = new ArrayList<>();
-        characters = new HashMap<>();
+        characters = new SparseArray<>();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class ComicAdapter extends RecyclerView.Adapter<ComicViewHolder> {
 
     }
 
-    public void addComic(ComicsResponse.Comic comic) {
+    private void addComic(ComicsResponse.Comic comic) {
         comics.add(comic);
         notifyItemInserted(comics.size() - 1);
     }

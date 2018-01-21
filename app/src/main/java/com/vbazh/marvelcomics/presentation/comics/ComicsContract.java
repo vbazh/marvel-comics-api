@@ -10,6 +10,8 @@ public interface ComicsContract {
 
     interface View extends MvpView {
 
+        void setTitle(String interval);
+
         void addData(List<ComicsResponse.Comic> comics);
 
         void showError();
@@ -30,7 +32,9 @@ public interface ComicsContract {
 
     interface Presenter {
 
-        void loadData(String interval);
+        void getDataIntent(long start, long end);
+
+        void loadData();
 
         void onScrolled(int visibleItemCount, int totalItemCount, int firstVisibleItem);
 

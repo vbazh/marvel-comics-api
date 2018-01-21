@@ -1,5 +1,7 @@
 package com.vbazh.marvelcomics.di.app;
 
+import android.content.Context;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.vbazh.marvelcomics.BuildConfig;
@@ -10,6 +12,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.Cache;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -29,27 +32,32 @@ public class RemoteDataModule {
 
     @Provides
     @Singleton
-    OkHttpClient provideOkHttpClient(HashUtil hashUtil) {
+    OkHttpClient provideOkHttpClient(HashUtil hashUtil, Cache cache) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
         httpClient.addInterceptor(chain -> {
-            Request original = chain.request();
-            HttpUrl originalHttpUrl = original.url();
-
-            HttpUrl url = originalHttpUrl.newBuilder()
+            HttpUrl url = chain.request().url().newBuilder()
                     .addQueryParameter("ts", hashUtil.getTs())
                     .addQueryParameter("apikey", BuildConfig.PUBLIC_KEY)
                     .addQueryParameter("hash", hashUtil.getHash())
                     .build();
 
-            Request.Builder requestBuilder = original.newBuilder().url(url);
+            Request.Builder requestBuilder = chain.request().newBuilder().url(url);
             return chain.proceed(requestBuilder.build());
         });
-        httpClient.addInterceptor(logging);
+        httpClient.addInterceptor(new HttpLoggingInterceptor()
+                .setLevel(HttpLoggingInterceptor.Level.BASIC));
+
+        httpClient.cache(cache);
 
         return httpClient.build();
+    }
+
+    @Provides
+    @Singleton
+    Cache provideCache(Context context) {
+        int cacheSize = 8 * 1024 * 1024;
+        return new Cache(context.getCacheDir(), cacheSize);
     }
 
     @Provides

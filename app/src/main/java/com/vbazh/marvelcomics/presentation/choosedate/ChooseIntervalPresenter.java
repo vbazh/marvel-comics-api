@@ -12,6 +12,8 @@ import javax.inject.Inject;
 @InjectViewState
 public class ChooseIntervalPresenter extends MvpPresenter<ChooseIntervalContract.View> implements ChooseIntervalContract.Presenter {
 
+    private long start, end;
+
     @Inject
     public ChooseIntervalPresenter(){
 
@@ -20,21 +22,23 @@ public class ChooseIntervalPresenter extends MvpPresenter<ChooseIntervalContract
     @Override
     public void setStartInterval(int year, int month, int day) {
 
-        getViewState().setStart(getCalendar(year, month, day).getTimeInMillis());
+        start = getCalendar(year, month, day).getTimeInMillis();
+        getViewState().setStart(start);
     }
 
     @Override
     public void setEndInterval(int year, int month, int day) {
 
-        getViewState().setEnd(getCalendar(year, month, day).getTimeInMillis());
+        end = getCalendar(year, month, day).getTimeInMillis();
+        getViewState().setEnd(end);
     }
 
     @Override
-    public void checkValidInterval(long start, long end) {
+    public void checkValidInterval() {
 
         if (start == 0 || end == 0 || start > end) {
             getViewState().showError();
-        } else getViewState().startComicsActivity();
+        } else getViewState().startComicsActivity(start, end);
     }
 
     @Override

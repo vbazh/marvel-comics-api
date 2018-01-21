@@ -5,6 +5,7 @@ import com.arellomobile.mvp.MvpPresenter;
 import com.vbazh.marvelcomics.di.annotations.ComicsScope;
 import com.vbazh.marvelcomics.domain.characters.ICharacterInteractor;
 import com.vbazh.marvelcomics.domain.comics.IComicsInteractor;
+import com.vbazh.marvelcomics.utils.DateFormatUtils;
 import com.vbazh.marvelcomics.utils.RxUtil;
 
 import javax.inject.Inject;
@@ -15,30 +16,41 @@ import io.reactivex.disposables.CompositeDisposable;
 @InjectViewState
 public class ComicsPresenter extends MvpPresenter<ComicsContract.View> implements ComicsContract.Presenter {
 
-    IComicsInteractor comicsInteractor;
-    ICharacterInteractor characterInteractor;
+    private IComicsInteractor comicsInteractor;
+    private ICharacterInteractor characterInteractor;
+    private DateFormatUtils dateFormatUtils;
 
-    CompositeDisposable subscriptions;
+    private CompositeDisposable subscriptions;
     private String interval;
     private int totalCount, offset;
+    private boolean isLoadingComics;
 
     @Inject
-    public ComicsPresenter(IComicsInteractor comicsInteractor, ICharacterInteractor characterInteractor) {
+    public ComicsPresenter(IComicsInteractor comicsInteractor,
+                           ICharacterInteractor characterInteractor,
+                           DateFormatUtils dateFormatUtils) {
 
         this.comicsInteractor = comicsInteractor;
         this.characterInteractor = characterInteractor;
+        this.dateFormatUtils = dateFormatUtils;
         subscriptions = new CompositeDisposable();
         offset = 0;
     }
 
     @Override
-    public void loadData(String interval) {
+    public void getDataIntent(long start, long end) {
+        this.interval = dateFormatUtils.formatIntervalForQuery(start, end);
+        getViewState().setTitle(dateFormatUtils.formatIntervalText(start, end));
+    }
 
-        this.interval = interval;
+    @Override
+    public void loadData() {
 
+        isLoadingComics = true;
         getViewState().showLoading();
         subscriptions.add(comicsInteractor.getComics(20, offset, interval)
                 .compose(RxUtil.applySingleSchedulers())
+                .doFinally(() -> isLoadingComics = false)
                 .subscribe(
                         response -> {
                             getViewState().hideLoading();
@@ -55,7 +67,6 @@ public class ComicsPresenter extends MvpPresenter<ComicsContract.View> implement
                         error -> {
                             getViewState().showError();
                             getViewState().hideLoading();
-
                         }
                 ));
     }
@@ -63,13 +74,13 @@ public class ComicsPresenter extends MvpPresenter<ComicsContract.View> implement
     @Override
     public void onScrolled(int visibleItemCount, int totalItemCount, int firstVisibleItem) {
 
-        if (offset != totalCount) {
+        if (!isLoadingComics && offset != totalCount) {
 
             if ((visibleItemCount + firstVisibleItem) >= totalItemCount
                     && firstVisibleItem >= 0
                     && totalItemCount <= totalCount) {
 
-                loadData(interval);
+                loadData();
             }
         }
     }

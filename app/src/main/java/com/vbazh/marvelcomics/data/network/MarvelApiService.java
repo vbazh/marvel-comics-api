@@ -7,7 +7,6 @@ import com.vbazh.marvelcomics.models.ComicsResponse;
 import javax.annotation.Nullable;
 
 import io.reactivex.Single;
-import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;

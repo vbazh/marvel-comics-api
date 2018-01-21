@@ -12,6 +12,7 @@ import com.vbazh.marvelcomics.repositories.CharacterRepositoryImpl;
 import com.vbazh.marvelcomics.repositories.ComicsRepositoryImpl;
 import com.vbazh.marvelcomics.repositories.ICharacterRepository;
 import com.vbazh.marvelcomics.repositories.IComicsRepository;
+import com.vbazh.marvelcomics.utils.DateFormatUtils;
 
 
 import dagger.Module;
@@ -22,8 +23,10 @@ public class ComicsModule {
 
     @Provides
     @ComicsScope
-    ComicsContract.Presenter providePresenter(IComicsInteractor comicsInteractor, ICharacterInteractor characterInteractor){
-        return new ComicsPresenter(comicsInteractor, characterInteractor);
+    ComicsContract.Presenter providePresenter(IComicsInteractor comicsInteractor,
+                                              ICharacterInteractor characterInteractor,
+                                              DateFormatUtils dateFormatUtils){
+        return new ComicsPresenter(comicsInteractor, characterInteractor, dateFormatUtils);
     }
 
     @Provides

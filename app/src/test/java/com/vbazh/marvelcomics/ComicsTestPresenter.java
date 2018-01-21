@@ -9,6 +9,7 @@ import com.vbazh.marvelcomics.presentation.comics.ComicsContract;
 import com.vbazh.marvelcomics.presentation.comics.ComicsPresenter;
 import com.vbazh.marvelcomics.repositories.ComicsRepositoryImpl;
 import com.vbazh.marvelcomics.repositories.IComicsRepository;
+import com.vbazh.marvelcomics.utils.DateFormatUtils;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +40,9 @@ public class ComicsTestPresenter {
     IComicsInteractor comicsInteractor;
 
     @Mock
+    DateFormatUtils dateFormatUtils;
+
+    @Mock
     MarvelApiService marvelApiService;
 
     @Mock
@@ -57,7 +61,7 @@ public class ComicsTestPresenter {
 
         comicsRepositoryImp = new ComicsRepositoryImpl(marvelApiService);
         comicsInteractor = new ComicsInteractor(comicsRepositoryImp);
-        comicsPresenter = new ComicsPresenter(comicsInteractor, characterInteractor);
+        comicsPresenter = new ComicsPresenter(comicsInteractor, characterInteractor, dateFormatUtils);
         comicsPresenter.attachView(comicsView);
 
     }
@@ -69,7 +73,7 @@ public class ComicsTestPresenter {
 
         when(comicsRepositoryImp.getComics(20, 0, null)).thenReturn(Single.error(throwable));
 
-        comicsPresenter.loadData(null);
+        comicsPresenter.loadData();
 
         InOrder inOrder = Mockito.inOrder(comicsView);
 

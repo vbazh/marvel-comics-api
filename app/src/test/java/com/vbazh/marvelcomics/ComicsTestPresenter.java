@@ -1,14 +1,9 @@
 package com.vbazh.marvelcomics;
 
-
-import com.vbazh.marvelcomics.data.network.MarvelApiService;
 import com.vbazh.marvelcomics.domain.characters.ICharacterInteractor;
-import com.vbazh.marvelcomics.domain.comics.ComicsInteractor;
 import com.vbazh.marvelcomics.domain.comics.IComicsInteractor;
 import com.vbazh.marvelcomics.presentation.comics.ComicsContract;
 import com.vbazh.marvelcomics.presentation.comics.ComicsPresenter;
-import com.vbazh.marvelcomics.repositories.ComicsRepositoryImpl;
-import com.vbazh.marvelcomics.repositories.IComicsRepository;
 import com.vbazh.marvelcomics.utils.DateFormatUtils;
 
 import org.junit.Before;
@@ -26,7 +21,6 @@ import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -34,16 +28,12 @@ public class ComicsTestPresenter {
 
     @Mock
     ComicsContract.View comicsView;
-    @Mock
-    IComicsRepository comicsRepositoryImp;
+
     @Mock
     IComicsInteractor comicsInteractor;
 
     @Mock
     DateFormatUtils dateFormatUtils;
-
-    @Mock
-    MarvelApiService marvelApiService;
 
     @Mock
     ICharacterInteractor characterInteractor;
@@ -59,8 +49,6 @@ public class ComicsTestPresenter {
         RxJavaPlugins.setNewThreadSchedulerHandler(scheduler -> Schedulers.trampoline());
         RxJavaPlugins.setComputationSchedulerHandler(scheduler -> Schedulers.trampoline());
 
-        comicsRepositoryImp = new ComicsRepositoryImpl(marvelApiService);
-        comicsInteractor = new ComicsInteractor(comicsRepositoryImp);
         comicsPresenter = new ComicsPresenter(comicsInteractor, characterInteractor, dateFormatUtils);
         comicsPresenter.attachView(comicsView);
 
@@ -71,7 +59,7 @@ public class ComicsTestPresenter {
 
         Throwable throwable = new Throwable("error internet");
 
-        when(comicsRepositoryImp.getComics(20, 0, null)).thenReturn(Single.error(throwable));
+        when(comicsInteractor.getComics(20, 0, null)).thenReturn(Single.error(throwable));
 
         comicsPresenter.loadData();
 
@@ -82,6 +70,4 @@ public class ComicsTestPresenter {
         inOrder.verifyNoMoreInteractions();
 
     }
-
-
 }
